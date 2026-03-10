@@ -1,8 +1,12 @@
 streamlit
 pandas
 python-dotenv
+langchain
 langchain-core
 langchain-openai
 langchain-experimental
 matplotlib
 seaborn
+groq
+openai
+tiktoken
