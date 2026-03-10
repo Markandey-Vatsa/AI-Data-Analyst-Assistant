@@ -1,0 +1,15 @@
+# Environment variables
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environment
+myenv/
+
+# Temporary / test folder
+t/
+
+# IDE files (optional but recommended)
+.vscode/
