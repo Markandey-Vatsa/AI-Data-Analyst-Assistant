@@ -4,83 +4,100 @@ import pandas as pd
 from text_analysis import run_text_analysis
 from Visualization import run_visualization
 
-st.set_page_config(page_title="AI Data Assistant", layout="wide")
-
-st.title("AI Data Analysis Assistant")
-
-st.info(
-    "Please upload your dataset in **CSV format (.csv)**. "
-    "Excel files should be converted to CSV before uploading."
+st.set_page_config(
+    page_title="AI Data Assistant",
+    layout="wide",
+    page_icon="📊"
 )
 
-# Upload dataset
+# Header
+st.markdown(
+    """
+    <h1 style='text-align:center;'>AI Data Analysis Assistant</h1>
+    <p style='text-align:center; font-size:18px; color:gray;'>
+    Upload your dataset and interact with it using natural language
+    </p>
+    """,
+    unsafe_allow_html=True
+)
 
-st.sidebar.header("Dataset Upload")
+st.divider()
+
+# Sidebar upload
+st.sidebar.header("📁 Dataset Upload")
 
 uploaded_file = st.sidebar.file_uploader(
     "Upload dataset (CSV format only)",
     type=["csv"]
 )
 
+st.sidebar.info(
+    "Supported Format: CSV\n\n"
+    "Convert Excel files to CSV before uploading."
+)
+
 if uploaded_file is None:
-    st.warning("No file uploaded yet. Upload a **.csv file** to continue.")
+    st.warning("Upload a **CSV dataset** from the sidebar to begin.")
     st.stop()
 
 df = pd.read_csv(uploaded_file)
 
-st.success("CSV file uploaded successfully")
+st.success("Dataset uploaded successfully")
 
-with st.expander("Dataset Preview"):
-    st.dataframe(df, use_container_width=True)
+# Dataset preview
+with st.expander("📄 Preview Dataset", expanded=False):
+    st.dataframe(df, width="stretch")
 
 st.divider()
 
 # Mode selection
+st.markdown("### Interaction Mode")
 
 mode = st.radio(
-    "Choose how you want to interact with the data",
+    "",
     ["Ask Question", "Generate Visualization", "Question with Visualization"],
     horizontal=True
 )
 
 st.divider()
 
-# Layout
-
-col1, col2, col3 = st.columns([1, 1, 2])
+# Layout columns
+col1, col2, col3 = st.columns([1.1, 1.2, 2])
 
 # Query input
-
 with col1:
 
-    st.subheader("Query Input")
+    st.markdown("### ✏ Query Input")
 
     query = st.text_area(
         "Enter your query",
-        height=180,
-        placeholder="Example: Show sales trend over time"
+        height=200,
+        placeholder="Example:\n• What is the average sales value?\n• Show sales trend over time\n• Compare category sales"
     )
 
-    submit = st.button("Submit Query")
+    submit = st.button("🚀 Run Analysis", use_container_width=True)
 
 # Query output
-
 with col2:
 
-    st.subheader("Query Output")
+    st.markdown("### 📑 Analysis Result")
 
-    text_output = st.empty()
+    output_box = st.container(border=True)
+
+    with output_box:
+        text_output = st.empty()
 
 # Visualization output
-
 with col3:
 
-    st.subheader("Visualization Output")
+    st.markdown("### 📊 Visualization")
 
-    chart_output = st.empty()
+    chart_box = st.container(border=True)
+
+    with chart_box:
+        chart_output = st.empty()
 
 # Run analysis
-
 if submit:
 
     if query.strip() == "":
@@ -111,7 +128,7 @@ if submit:
                     fig = run_visualization(df, query)
 
                     chart_output.success("Visualization Generated")
-                    chart_output.pyplot(fig, use_container_width=True)
+                    chart_output.pyplot(fig, width="stretch")
 
                 except Exception as e:
 
@@ -136,7 +153,7 @@ if submit:
                     fig = run_visualization(df, query)
 
                     chart_output.success("Visualization Generated")
-                    chart_output.pyplot(fig, use_container_width=True)
+                    chart_output.pyplot(fig, width="stretch")
 
                 except Exception as e:
 

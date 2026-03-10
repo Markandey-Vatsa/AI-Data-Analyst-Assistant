@@ -1,10 +1,10 @@
 import os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
-import pandas as pd
 from langchain_core.prompts import ChatPromptTemplate
 import matplotlib.pyplot as plt
 import seaborn as sns
+import pandas as pd
 import numpy as np
 
 load_dotenv()
@@ -26,7 +26,23 @@ def clean_code(code):
     return code.strip()
 
 
+def convert_datetime_columns(df):
+    """
+    Attempt automatic datetime conversion for object columns
+    """
+    for col in df.columns:
+        if df[col].dtype == "object":
+            try:
+                df[col] = pd.to_datetime(df[col])
+            except:
+                pass
+    return df
+
+
 def run_visualization(df, query):
+
+    # try converting date columns automatically
+    df = convert_datetime_columns(df)
 
     columns = df.columns.tolist()
     data_types = {col: str(dtype) for col, dtype in df.dtypes.items()}
@@ -45,17 +61,15 @@ Rules:
 - Do NOT write explanations
 - Do NOT use markdown
 - Do NOT import libraries
-- The dataframe is already available as df
-- pandas is available as pd
-- seaborn is available as sns
-- matplotlib.pyplot is available as plt
+- Create chart using matplotlib or seaborn
 - Always start with: fig, ax = plt.subplots(figsize=(12,6))
 - Plot using ax
 - Do NOT use plt.show()
-- Use sns.set_theme(style="whitegrid") for styling if needed
-- Use seaborn color palettes when appropriate
-- Graph should be relevant to the user's question and the data provided
-- Graph should be visually appealing and easy to understand
+- Do NOT manually set ticks or tick labels
+- Do NOT use ax.set_xticks() or ax.set_xticklabels()
+- Let matplotlib automatically handle axis ticks
+- If datetime operations are needed, convert using pd.to_datetime() first
+- Prefer df.resample('M', on='date_column') for monthly aggregation
 """
 
     prompt_template = ChatPromptTemplate.from_messages(
@@ -86,7 +100,9 @@ Rules:
     try:
         exec(generated_code, {}, local_env)
     except Exception as e:
-        raise RuntimeError(f"Visualization generation failed: {e}")
+        raise RuntimeError(
+            f"Visualization generation failed: {e}\n\nGenerated Code:\n{generated_code}"
+        )
 
     fig = local_env.get("fig")
 
