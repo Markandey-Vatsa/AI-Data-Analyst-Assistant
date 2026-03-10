@@ -152,6 +152,10 @@ The application will open automatically in your browser.
 B.Tech Computer Science Engineering,
 Interested in **AI application development, and Intelligent Systems and Java Backend Development (Developing scalable applications)**
 
+
+## Visit the link to try: 
+**https://ai-data-analyst-assistant-aacygtf4mcnnv3dpczi29h.streamlit.app/**
+
 ---
 
 
