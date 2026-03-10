@@ -55,7 +55,7 @@ st.markdown("### Interaction Mode")
 
 mode = st.radio(
     "",
-    ["Ask Question", "Generate Visualization", "Question with Visualization"],
+    ["Ask Question", "Generate Visualization"],
     horizontal=True
 )
 
@@ -123,31 +123,6 @@ if submit:
 
             # VISUALIZATION ONLY
             elif mode == "Generate Visualization":
-
-                try:
-                    fig = run_visualization(df, query)
-
-                    chart_output.success("Visualization Generated")
-                    chart_output.pyplot(fig, width="stretch")
-
-                except Exception as e:
-
-                    chart_output.error("Visualization failed")
-                    chart_output.write(str(e))
-
-            # BOTH
-            elif mode == "Question with Visualization":
-
-                try:
-                    result = run_text_analysis(df, query)
-
-                    text_output.success("Analysis Completed")
-                    text_output.write(result)
-
-                except Exception as e:
-
-                    text_output.error("Error in analysis")
-                    text_output.write(str(e))
 
                 try:
                     fig = run_visualization(df, query)
