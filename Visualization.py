@@ -1,9 +1,11 @@
 import os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
+import pandas as pd
 from langchain_core.prompts import ChatPromptTemplate
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
 
 load_dotenv()
 
@@ -43,10 +45,15 @@ Rules:
 - Do NOT write explanations
 - Do NOT use markdown
 - Do NOT import libraries
-- Create chart using matplotlib or seaborn
+- The dataframe is already available as df
+- pandas is available as pd
+- seaborn is available as sns
+- matplotlib.pyplot is available as plt
 - Always start with: fig, ax = plt.subplots(figsize=(12,6))
 - Plot using ax
 - Do NOT use plt.show()
+- Use sns.set_theme(style="whitegrid") for styling if needed
+- Use seaborn color palettes when appropriate
 - Graph should be relevant to the user's question and the data provided
 - Graph should be visually appealing and easy to understand
 """
@@ -71,7 +78,9 @@ Rules:
     local_env = {
         "df": df,
         "plt": plt,
-        "sns": sns
+        "sns": sns,
+        "pd": pd,
+        "np": np
     }
 
     try:
