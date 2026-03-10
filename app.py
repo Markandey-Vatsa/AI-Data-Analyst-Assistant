@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
+
 from text_analysis import run_text_analysis
+from Visualization import run_visualization
 
 st.set_page_config(page_title="AI Data Assistant", layout="wide")
 
@@ -11,8 +13,7 @@ st.info(
     "Excel files should be converted to CSV before uploading."
 )
 
-# SIDEBAR UPLOAD
-
+# Upload dataset
 
 st.sidebar.header("Dataset Upload")
 
@@ -25,10 +26,6 @@ if uploaded_file is None:
     st.warning("No file uploaded yet. Upload a **.csv file** to continue.")
     st.stop()
 
-
-# LOAD DATA
-
-
 df = pd.read_csv(uploaded_file)
 
 st.success("CSV file uploaded successfully")
@@ -38,9 +35,7 @@ with st.expander("Dataset Preview"):
 
 st.divider()
 
-
-# MODE SELECTION
-
+# Mode selection
 
 mode = st.radio(
     "Choose how you want to interact with the data",
@@ -50,15 +45,11 @@ mode = st.radio(
 
 st.divider()
 
-# -------------------------
-# LAYOUT
-# -------------------------
+# Layout
 
-col1, col2, col3 = st.columns([1, 1, 1])
+col1, col2, col3 = st.columns([1, 1, 2])
 
-
-# QUERY INPUT
-
+# Query input
 
 with col1:
 
@@ -66,15 +57,13 @@ with col1:
 
     query = st.text_area(
         "Enter your query",
-        height=150,
-        placeholder="Example: Which month has the highest sales?"
+        height=180,
+        placeholder="Example: Show sales trend over time"
     )
 
     submit = st.button("Submit Query")
 
-# -------------------------
-# TEXT OUTPUT
-# -------------------------
+# Query output
 
 with col2:
 
@@ -82,9 +71,7 @@ with col2:
 
     text_output = st.empty()
 
-# -------------------------
-# VISUALIZATION OUTPUT
-# -------------------------
+# Visualization output
 
 with col3:
 
@@ -92,25 +79,66 @@ with col3:
 
     chart_output = st.empty()
 
-# -------------------------
-# RUN ANALYSIS
-# -------------------------
+# Run analysis
 
 if submit:
 
     if query.strip() == "":
-        st.warning("Please enter a query.")
+        st.warning("Please enter a query")
+
     else:
 
         with st.spinner("Analyzing dataset..."):
 
-            try:
-                result = run_text_analysis(df, query)
+            # TEXT ONLY
+            if mode == "Ask Question":
 
-                text_output.success("Analysis Completed")
-                text_output.write(result)
+                try:
+                    result = run_text_analysis(df, query)
 
-            except Exception as e:
+                    text_output.success("Analysis Completed")
+                    text_output.write(result)
 
-                text_output.error("Error while processing query")
-                text_output.write(str(e))
+                except Exception as e:
+
+                    text_output.error("Error while processing query")
+                    text_output.write(str(e))
+
+            # VISUALIZATION ONLY
+            elif mode == "Generate Visualization":
+
+                try:
+                    fig = run_visualization(df, query)
+
+                    chart_output.success("Visualization Generated")
+                    chart_output.pyplot(fig, use_container_width=True)
+
+                except Exception as e:
+
+                    chart_output.error("Visualization failed")
+                    chart_output.write(str(e))
+
+            # BOTH
+            elif mode == "Question with Visualization":
+
+                try:
+                    result = run_text_analysis(df, query)
+
+                    text_output.success("Analysis Completed")
+                    text_output.write(result)
+
+                except Exception as e:
+
+                    text_output.error("Error in analysis")
+                    text_output.write(str(e))
+
+                try:
+                    fig = run_visualization(df, query)
+
+                    chart_output.success("Visualization Generated")
+                    chart_output.pyplot(fig, use_container_width=True)
+
+                except Exception as e:
+
+                    chart_output.error("Visualization failed")
+                    chart_output.write(str(e))
