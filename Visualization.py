@@ -18,9 +18,6 @@ model = ChatOpenAI(
 
 
 def clean_code(code):
-    """
-    Removes markdown formatting that LLMs sometimes generate
-    """
     code = code.replace("```python", "")
     code = code.replace("```", "")
     code = code.replace("plt.show()", "")
@@ -28,9 +25,6 @@ def clean_code(code):
 
 
 def convert_datetime_columns(df):
-    """
-    Attempt automatic datetime conversion for object columns
-    """
     for col in df.columns:
         if df[col].dtype == "object":
             try:
@@ -42,7 +36,6 @@ def convert_datetime_columns(df):
 
 def run_visualization(df, query):
 
-    # convert possible date columns
     df = convert_datetime_columns(df)
 
     columns = df.columns.tolist()
@@ -94,7 +87,7 @@ Rules:
 
     generated_code = clean_code(response.content)
 
-    local_env = {
+    global_env = {
         "df": df,
         "plt": plt,
         "sns": sns,
@@ -102,14 +95,16 @@ Rules:
         "np": np
     }
 
+    local_env = {}
+
     try:
-        exec(generated_code, local_env)
+        exec(generated_code, global_env, local_env)
     except Exception as e:
         raise RuntimeError(
             f"Visualization generation failed: {e}\n\nGenerated Code:\n{generated_code}"
         )
 
-    fig = local_env.get("fig")
+    fig = local_env.get("fig") or global_env.get("fig")
 
     if fig is None:
         fig = plt.gcf()
