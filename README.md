@@ -149,8 +149,8 @@ The application will open automatically in your browser.
 ## Author
 
 **Markandey Vatsa**
-B.Tech Computer Science Engineering
-Interested in **Data Analytics, AI, and Intelligent Systems and Java Backend Development (Developing scalable applications)**
+B.Tech Computer Science Engineering,
+Interested in **AI application development, and Intelligent Systems and Java Backend Development (Developing scalable applications)**
 
 ---
 
