@@ -23,6 +23,7 @@ def clean_code(code):
     """
     code = code.replace("```python", "")
     code = code.replace("```", "")
+    code = code.replace("plt.show()", "")
     return code.strip()
 
 
@@ -41,7 +42,7 @@ def convert_datetime_columns(df):
 
 def run_visualization(df, query):
 
-    # try converting date columns automatically
+    # convert possible date columns
     df = convert_datetime_columns(df)
 
     columns = df.columns.tolist()
@@ -61,15 +62,19 @@ Rules:
 - Do NOT write explanations
 - Do NOT use markdown
 - Do NOT import libraries
-- Create chart using matplotlib or seaborn
+- Use only df that already exists
 - Always start with: fig, ax = plt.subplots(figsize=(12,6))
 - Plot using ax
+- Use matplotlib or seaborn
+- Prefer seaborn plots
 - Do NOT use plt.show()
-- Do NOT manually set ticks or tick labels
+- Generate ONLY ONE visualization
+- Do NOT create multiple figures
+- Do NOT manually set ticks
 - Do NOT use ax.set_xticks() or ax.set_xticklabels()
 - Let matplotlib automatically handle axis ticks
-- If datetime operations are needed, convert using pd.to_datetime() first
-- Prefer df.resample('M', on='date_column') for monthly aggregation
+- If datetime operations are needed convert using pd.to_datetime()
+- If selecting multiple columns use df[['col1','col2']] not df['col1','col2']
 """
 
     prompt_template = ChatPromptTemplate.from_messages(
@@ -98,7 +103,7 @@ Rules:
     }
 
     try:
-        exec(generated_code, {}, local_env)
+        exec(generated_code, local_env)
     except Exception as e:
         raise RuntimeError(
             f"Visualization generation failed: {e}\n\nGenerated Code:\n{generated_code}"
